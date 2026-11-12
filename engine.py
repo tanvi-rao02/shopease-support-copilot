@@ -71,8 +71,11 @@ class FAQBot:
 
     @staticmethod
     def _llm_draft(query, matches):
-        if not os.getenv("GEMINI_API_KEY"):
-            return None                      # falls back to template draft
+       if not os.getenv("GEMINI_API_KEY"):
+    print("[Gemini] API key not found")
+    return None
+
+print("[Gemini] API key detected")                   # falls back to template draft
         try:
             from google import genai
             context = "\n\n".join(
@@ -85,8 +88,15 @@ class FAQBot:
                 f"FAQ entries:\n{context}\n\n"
                 f"Customer question: {query}\n\nDraft reply:")
             client = genai.Client()          # reads GEMINI_API_KEY automatically
-            resp = client.models.generate_content(model=LLM_MODEL, contents=prompt)
-            return resp.text.strip()
+           resp = client.models.generate_content(model=LLM_MODEL, contents=prompt)
+
+print("[Gemini] API request successful")
+
+if not resp.text:
+    print("[Gemini] Empty response received")
+    return None
+
+return resp.text.strip()
         except Exception as e:
             print(f"[LLM fallback to template] {e}")
             return None

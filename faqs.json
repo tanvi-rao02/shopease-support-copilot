@@ -1,0 +1,14 @@
+[
+  {"id": 1, "question": "What is your return policy?", "answer": "You can return any unused item within 30 days of delivery for a full refund. Items must be in original packaging. Start a return from the 'My Orders' page."},
+  {"id": 2, "question": "How long does shipping take?", "answer": "Standard shipping takes 3-5 business days within India. Express shipping takes 1-2 business days. Orders placed after 2 PM ship the next business day."},
+  {"id": 3, "question": "How can I track my order?", "answer": "Once your order ships, you will get an email and SMS with a tracking link. You can also track it under 'My Orders' > 'Track Package'."},
+  {"id": 4, "question": "What payment methods do you accept?", "answer": "We accept UPI, credit and debit cards, net banking, popular wallets, and cash on delivery for orders under Rs. 5,000."},
+  {"id": 5, "question": "How do I cancel my order?", "answer": "You can cancel from 'My Orders' before the order is shipped. Once shipped, please refuse delivery or start a return after it arrives."},
+  {"id": 6, "question": "When will I get my refund?", "answer": "Refunds are issued within 5-7 business days after we receive the returned item, to your original payment method."},
+  {"id": 7, "question": "Do you ship internationally?", "answer": "Yes, we ship to over 25 countries. International delivery takes 7-14 business days, and customs duties are paid by the customer."},
+  {"id": 8, "question": "What warranty do your products have?", "answer": "Electronics carry a 1-year manufacturer warranty. Keep your invoice, as it is required for any warranty claim."},
+  {"id": 9, "question": "How do I change my delivery address?", "answer": "You can edit the address from 'My Orders' until the order ships. After that, the address cannot be changed."},
+  {"id": 10, "question": "How do I use a promo code?", "answer": "Enter the code in the 'Promo code' box at checkout and click Apply. Only one code can be used per order."},
+  {"id": 11, "question": "I forgot my password. How do I reset it?", "answer": "Click 'Forgot password' on the login page, enter your registered email, and follow the reset link. The link is valid for 30 minutes."},
+  {"id": 12, "question": "What are your customer support hours?", "answer": "Our support team is available Monday to Saturday, 9 AM to 7 PM IST via chat or at support@shopease.example."}
+]

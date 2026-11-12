@@ -197,12 +197,17 @@ class FAQBot:
                 "Draft reply:"
             )
 
-            client = genai.Client(api_key=api_key)
+           from google.genai import types
 
-            response = client.models.generate_content(
-                model=LLM_MODEL,
-                contents=prompt
-            )
+client = genai.Client(
+    api_key=api_key,
+    http_options=types.HttpOptions(timeout=30000)
+)
+
+response = client.models.generate_content(
+    model=LLM_MODEL,
+    contents=prompt
+)
 
             if not response.text:
                 print(

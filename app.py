@@ -32,9 +32,16 @@ def log_referral(q, reason):
         w.writerow([datetime.datetime.now().isoformat(timespec="seconds"), q, reason])
 
 
-if st.button("Draft reply", type="primary") and query.strip():
-    st.session_state["res"] = bot.respond(query, threshold)
-    st.session_state["manual"] = False
+if st.button("Draft reply", type="primary"):
+    if not query.strip():
+        st.warning("Please enter a customer question first.")
+    else:
+        try:
+            with st.spinner("Generating your reply..."):
+                st.session_state["res"] = bot.respond(query, threshold)
+                st.session_state["manual"] = False
+        except Exception as e:
+            st.error(f"Unable to generate reply: {e}")
 
 res = st.session_state.get("res")
 if res:

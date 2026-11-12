@@ -160,24 +160,20 @@ class FAQBot:
             "else we can help with!"
         )
 
+   
     @staticmethod
     def _llm_draft(query, matches):
         api_key = os.getenv("GEMINI_API_KEY")
 
         if not api_key:
-            print(
-                "[Gemini] API key not found",
-                flush=True
-            )
+            print("[Gemini] API key not found", flush=True)
             return None
 
-        print(
-            "[Gemini] API key detected",
-            flush=True
-        )
+        print("[Gemini] API key detected", flush=True)
 
         try:
             from google import genai
+            from google.genai import types
 
             context = "\n\n".join(
                 f"Q: {faq['question']}\nA: {faq['answer']}"
@@ -186,46 +182,34 @@ class FAQBot:
 
             prompt = (
                 "You are a customer support assistant. "
-                "Draft a short, friendly reply using "
-                "ONLY the FAQ entries below. "
-                "Do not invent policies, numbers or links. "
-                "If the FAQs do not contain enough "
-                "information to answer, reply with "
-                "exactly: REFER_TO_HUMAN\n\n"
+                "Draft a short, friendly reply using ONLY "
+                "the FAQ entries below. Do not invent "
+                "policies, numbers or links. If the FAQs "
+                "do not contain enough information, reply "
+                "with exactly: REFER_TO_HUMAN\n\n"
                 f"FAQ entries:\n{context}\n\n"
                 f"Customer question: {query}\n\n"
                 "Draft reply:"
             )
 
-           from google.genai import types
+            client = genai.Client(
+                api_key=api_key,
+                http_options=types.HttpOptions(timeout=30000)
+            )
 
-client = genai.Client(
-    api_key=api_key,
-    http_options=types.HttpOptions(timeout=30000)
-)
-
-response = client.models.generate_content(
-    model=LLM_MODEL,
-    contents=prompt
-)
+            response = client.models.generate_content(
+                model=LLM_MODEL,
+                contents=prompt
+            )
 
             if not response.text:
-                print(
-                    "[Gemini] Empty response received",
-                    flush=True
-                )
+                print("[Gemini] Empty response", flush=True)
                 return None
 
-            print(
-                "[Gemini] API request successful",
-                flush=True
-            )
+            print("[Gemini] API request successful", flush=True)
 
             return response.text.strip()
 
         except Exception as e:
-            print(
-                f"[Gemini] API error: {e}",
-                flush=True
-            )
+            print(f"[Gemini] API error: {e}", flush=True)
             return None

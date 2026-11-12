@@ -1,3 +1,4 @@
+
 import csv
 import datetime
 from pathlib import Path
@@ -9,6 +10,7 @@ from engine import FAQBot, THRESHOLD
 LOG = Path("referral_log.csv")
 
 
+# Page configuration
 st.set_page_config(
     page_title="ShopEase Support Copilot",
     page_icon="💬",
@@ -23,6 +25,7 @@ st.caption(
 )
 
 
+# Load FAQ bot
 @st.cache_resource
 def load_bot():
     return FAQBot()
@@ -31,6 +34,7 @@ def load_bot():
 bot = load_bot()
 
 
+# Referral threshold
 threshold = st.sidebar.slider(
     "Referral threshold",
     0.05,
@@ -45,12 +49,14 @@ st.sidebar.markdown(
 )
 
 
+# Customer question
 query = st.text_area(
     "Customer question",
     placeholder="e.g. How long does delivery take?"
 )
 
 
+# Referral logging
 def log_referral(q, reason):
     new = not LOG.exists()
 
@@ -59,6 +65,7 @@ def log_referral(q, reason):
         newline="",
         encoding="utf-8"
     ) as f:
+
         writer = csv.writer(f)
 
         if new:
@@ -77,20 +84,22 @@ def log_referral(q, reason):
 if st.button("Draft reply", type="primary"):
 
     if not query.strip():
+
         st.warning("Please enter a customer question first.")
 
     else:
+
         try:
+
             with st.spinner("Generating your response..."):
 
-                st.session_state["res"] = bot.respond(
-                    query,
-                    threshold
-                )
+                result = bot.respond(query, threshold)
 
+                st.session_state["res"] = result
                 st.session_state["manual"] = False
 
         except Exception as e:
+
             st.error(f"Unable to generate reply: {e}")
 
 
@@ -100,9 +109,11 @@ res = st.session_state.get("res")
 
 if res:
 
+    manual = st.session_state.get("manual", False)
+
     referred = (
         res.status == "REFER_TO_HUMAN"
-        or st.session_state.get("manual", False)
+        or manual
     )
 
     if referred:
@@ -111,7 +122,7 @@ if res:
 
         reason = (
             "Manual override by reviewer"
-            if st.session_state.get("manual", False)
+            if manual
             else res.reason
         )
 
@@ -123,7 +134,8 @@ if res:
                 "Thanks for reaching out. "
                 "Our support team will contact you shortly."
             ),
-            height=140
+            height=140,
+            key="holding_message"
         )
 
         if st.button("Log this referral"):
@@ -136,26 +148,38 @@ if res:
 
         st.success("🟢 RESPONSE DRAFTED")
 
-        # Show actual response source
-        if res.source == "Gemini AI":
+        # Safely identify response source
+        response_source = getattr(res, "source", "")
+
+        if response_source == "Gemini AI":
 
             st.success(
                 "✨ Response generated using Gemini AI"
             )
 
-        elif res.source == "FAQ Template":
+        elif response_source == "FAQ Template":
 
             st.warning(
                 "📝 Template fallback used "
                 "(Gemini unavailable)"
             )
 
+        else:
+
+            st.info(
+                "Response generated. "
+                "Source information unavailable."
+            )
+
+        # Editable customer reply
         st.text_area(
             "Draft reply (edit before sending)",
             res.draft,
-            height=200
+            height=200,
+            key="draft_reply"
         )
 
+        # Manual human referral
         if st.button("⚠️ Refer to human instead"):
 
             st.session_state["manual"] = True
@@ -163,11 +187,13 @@ if res:
             st.rerun()
 
 
+    # Confidence score
     st.progress(
         min(res.confidence, 1.0),
         text=f"Confidence: {res.confidence:.2f}"
     )
 
+    # Matching FAQs
     with st.expander("Top matching FAQs"):
 
         for faq, score in res.matches:

@@ -59,6 +59,10 @@ if res:
             st.success("Logged to referral_log.csv")
     else:
         st.success("🟢 DRAFTED FROM FAQ")
+        if res.source == "GEMINI_AI":
+    st.info("✨ Response generated using Gemini AI")
+elif res.source == "FAQ_TEMPLATE":
+    st.warning("📝 Template fallback used (Gemini unavailable)")
         st.text_area("Draft reply (edit before sending)", res.draft, height=200)
         if st.button("⚠️ Refer to human instead"):
             st.session_state["manual"] = True
